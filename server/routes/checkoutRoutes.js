@@ -1,7 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const Stripe = require("stripe");
-require("dotenv").config();
+import { Router } from "express";
+const router = Router();
+import Stripe from "stripe";
+import dotenv from "dotenv";
+dotenv.config();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 router.post("/checkout", async (req, res) => {
@@ -35,4 +36,4 @@ router.post("/checkout", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

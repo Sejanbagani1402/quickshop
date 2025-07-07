@@ -1,25 +1,45 @@
-const express = require("express");
-const router = express.Router();
-const Product = require("../models/Product");
+import { Router } from "express";
+const router = Router();
+import Product from "../models/Product.js";
+import {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
 
-//get all products.
-router.get("/", async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-//add product.   // id {  title, price, imageURL, description }
-router.post("/", async (req, res) => {
-  try {
-    const newProduct = new Product(req.body);
-    await newProduct.save();
-    res.status(201).json({ message: "The product is added." });
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-});
+import {
+  createProductValidator,
+  updateProductValidator,
+} from "../validators/productValidator.js";
 
-module.exports = router;
+import { handleValidationErrors } from "../middlewares/validation.js";
+import { authenticate, authorize } from "../middlewares/auth.js";
+
+//Routes
+
+router.get("/", getAllProducts);
+router.get("/:id", getProductById);
+
+//authenticated routes
+
+router.post(
+  "/",
+  authenticate,
+  createProductValidator,
+  handleValidationErrors,
+  createProduct
+);
+
+router.put(
+  "/:id",
+  authenticate,
+  updateProductValidator,
+  handleValidationErrors,
+  updateProduct
+);
+
+router.delete("/:id", authenticate, deleteProduct);
+
+export default router;
