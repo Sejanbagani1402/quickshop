@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 //db
-import connectDB from "./config/database.js";
-import errorHandler from "./middlewares/errorHandler.js";
+import { connectDB } from "./config/database.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 //
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";

@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Tag from "../models/Tag.js";
+import mongoose from "mongoose";
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -48,15 +49,16 @@ export const getAllProducts = async (req, res) => {
       .populate("createdBy", "username")
       .sort(sort)
       .limit(limit * 1)
-      .skip(page - 1 * limit);
-    const total = await Product.findDocument(filter);
+      .skip((page - 1) * limit);
+
+    const total = await Product.countDocuments(filter);
     res.json({
       success: true,
       data: {
         products,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.cell(total / limit),
+          totalPages: Math.ceil(total / limit),
           totalItems: total,
           itemsPerPage: parseInt(limit),
         },
@@ -69,7 +71,13 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id)
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid category ID format." });
+    }
+    const product = await Product.findById(id)
       .populate("category", "name slug description")
       .populate("tags", "name color")
       .populate("createdBy", "username");
@@ -130,7 +138,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (res, res) => {
+export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;

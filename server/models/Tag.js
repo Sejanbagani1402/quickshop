@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const tagSchema = new mongoose.Schema(
+export const tagSchema = new mongoose.Schema(
   {
     // id {name, color, isActive, timestamps}
     name: {
@@ -23,4 +23,5 @@ const tagSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Tag", tagSchema);
+const Tag = mongoose.model("Tag", tagSchema);
+export default Tag;

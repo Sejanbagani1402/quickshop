@@ -1,6 +1,5 @@
 import { Router } from "express";
 const router = Router();
-import Category from "../models/Category.js";
 import {
   getAllCategories,
   getCategoriesById,

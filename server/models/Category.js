@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 
-const categorySchema = new mongoose.Schema(
+export const categorySchema = new mongoose.Schema(
   {
     // id {name, description, slug, isActive, timestamps}
     name: {
@@ -30,5 +29,5 @@ const categorySchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-module.exports = mongoose.model("Category", categorySchema);
+const Category = mongoose.model("Category", categorySchema);
+export default Category;

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 
@@ -16,14 +17,14 @@ export const getAllCategories = async (req, res) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
-    const total = await Category.findDocument(filter);
+    const total = await Category.countDocuments(filter);
     res.json({
       success: true,
       data: {
         categories,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.cell(total / limit),
+          totalPages: Math.ceil(total / limit),
           totalItems: total,
           itemsPerPage: parseInt(limit),
         },
@@ -36,9 +37,17 @@ export const getAllCategories = async (req, res) => {
 
 export const getCategoriesById = async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid category ID format." });
+    }
+    const category = await Category.findById(id);
     if (!category) {
-      res.status(404).json({ success: false, message: "Category not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found." });
     }
     const productCount = await Product.countDocuments({
       category: category._id,
@@ -111,7 +120,7 @@ export const deleteCategory = async (req, res) => {
         message: "Cannot delete category with existing products.",
       });
     }
-    const category = await Category.findByIdDelete(id);
+    const category = await Category.findByIdAndDelete(id);
     if (!category) {
       return res
         .status(404)

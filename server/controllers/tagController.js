@@ -1,5 +1,6 @@
 import Tag from "../models/Tag.js";
 import Product from "../models/Product.js";
+import mongoose from "mongoose";
 
 export const getAllTags = async (req, res) => {
   try {
@@ -15,14 +16,14 @@ export const getAllTags = async (req, res) => {
       .sort({ name: 1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
-    const total = await Tag.findDocument(filter);
+    const total = await Tag.countDocuments(filter);
     res.json({
       success: true,
       data: {
         tags,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.cell(total / limit),
+          totalPages: Math.ceil(total / limit),
           totalItems: total,
           itemsPerPage: parseInt(limit),
         },
@@ -35,7 +36,13 @@ export const getAllTags = async (req, res) => {
 
 export const getTagsById = async (req, res) => {
   try {
-    const tag = await Tag.findById(req.params.id);
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid category ID format." });
+    }
+    const tag = await Tag.findById(id);
     if (!tag) {
       return res
         .status(404)

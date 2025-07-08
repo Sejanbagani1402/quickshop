@@ -28,7 +28,7 @@ export const register = async (req, res) => {
     });
     const refreshToken = generateRefreshToken({ userId: user._id });
     user.refreshToken = refreshToken;
-    user.save;
+    await user.save();
 
     //Registration comleted.
     res.status(201).json({
@@ -140,7 +140,7 @@ export const logout = async (req, res) => {
 };
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findOne(req.user_id).select(
+    const user = await User.findById(req.user._id).select(
       "-password -refreshToken"
     );
     res.json({ success: true, data: { user } });

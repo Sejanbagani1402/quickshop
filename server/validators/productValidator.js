@@ -44,7 +44,8 @@ export const updateProductValidator = [
     return true;
   }),
   body("title")
-    .optional.isLength({ min: 2, max: 200 })
+    .optional()
+    .isLength({ min: 2, max: 200 })
     .withMessage("The product title must be between 2 and 200 characters."),
   body("price")
     .optional()

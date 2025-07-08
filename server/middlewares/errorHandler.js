@@ -1,4 +1,4 @@
-const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
   //Mongoose Validation error
   if (err.name == "ValidationError") {
@@ -30,5 +30,3 @@ const errorHandler = (err, req, res, next) => {
     message: err.message || "Internal server error.",
   });
 };
-
-export default { errorHandler };
